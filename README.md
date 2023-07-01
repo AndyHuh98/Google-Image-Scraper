@@ -14,7 +14,7 @@ Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
 1. Open command prompt
 2. Clone this repository (or [download](https://github.com/AndyHuh98/Google-Image-Scraper/archive/refs/heads/master.zip))
     ```
-    git clone https://github.com/ohyicong/Google-Image-Scraper
+    git clone https://github.com/AndyHuh98/Google-Image-Scraper
     ```
 3. Install Dependencies
     ```
