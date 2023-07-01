@@ -1,4 +1,6 @@
 # Google Image Scraper
+NOTE: This is a fork of ohciyong's Google Image Scraper, designed to make it easier to run in Colabs and other notebooks.
+
 A library created to scrape Google Images.<br>
 If you are looking for other image scrapers, JJLimmm has created image scrapers for Gettyimages, Shutterstock, and Bing. <br>
 Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
@@ -10,7 +12,7 @@ Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
 
 ## Setup:
 1. Open command prompt
-2. Clone this repository (or [download](https://github.com/ohyicong/Google-Image-Scraper/archive/refs/heads/master.zip))
+2. Clone this repository (or [download](https://github.com/AndyHuh98/Google-Image-Scraper/archive/refs/heads/master.zip))
     ```
     git clone https://github.com/ohyicong/Google-Image-Scraper
     ```
