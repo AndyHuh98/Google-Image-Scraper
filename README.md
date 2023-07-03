@@ -38,9 +38,36 @@ Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
 ## Usage:
 This project was created to bypass Google Chrome's new restrictions on web scraping from Google Images. 
 To use it, define your desired parameters in main.py and run through the command line:
+
+### Running the script with default parameters:
 ```
 python main.py
 ```
+
+Default arguments will be of the form: 
+````
+searchkeys=['cat', 'dog'] 
+imagecount=5 
+headless=True 
+minres=(0, 0) 
+maxres=(9999, 9999) 
+imagecount=10 
+numworkers=1 
+keepfilename=False
+````
+
+### Running the script through CLI:
+*replace these arguments with your own preferences*
+```
+python3 main.py \
+    --searchkeys "cat houses" "doll houses" \
+    --imagecount 50 \
+    --minres 0 0 \
+    --maxres 9999 9999 \
+    --numworkers 5
+```
+* `--keepfilename` can be added to keep the original URL image filenames
+* `--headless` can be added to disable Chrome GUI
 
 ## Youtube Video:
 [![IMAGE ALT TEXT](https://github.com/ohyicong/Google-Image-Scraper/blob/master/youtube_thumbnail.PNG)](https://youtu.be/QZn_ZxpsIw4 "Google Image Scraper")
