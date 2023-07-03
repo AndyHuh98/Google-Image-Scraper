@@ -47,13 +47,16 @@ class GoogleImageScraper():
                 #try going to www.google.com
                 options = Options()
                 if(headless):
+                    print("Adding --headless option")
                     options.add_argument('--headless')
                 driver = webdriver.Chrome(webdriver_path, chrome_options=options)
                 driver.set_window_size(1400,1050)
                 driver.get("https://www.google.com")
                 try:
+                    print("Trying WebDriverWait...")
                     WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "W0wltc"))).click()
                 except Exception as e:
+                    print(e)
                     continue
             except Exception as e:
                 #update chromedriver
@@ -150,6 +153,7 @@ class GoogleImageScraper():
                 print("[INFO] Loading next page")
                 time.sleep(3)
             except Exception:
+                print("Exception scrolling...")
                 time.sleep(1)
 
 
