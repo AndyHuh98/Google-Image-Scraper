@@ -53,6 +53,7 @@ class GoogleImageScraper():
                 # https://stackoverflow.com/questions/50642308/webdriverexception-unknown-error-devtoolsactiveport-file-doesnt-exist-while-t
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument('--no-sandbox')
+                options.add_argument('--remote-debugging-port=9222')
                 driver = webdriver.Chrome(webdriver_path, chrome_options=options)
                 driver.set_window_size(1400,1050)
                 driver.get("https://www.google.com")

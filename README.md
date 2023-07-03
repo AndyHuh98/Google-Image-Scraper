@@ -53,7 +53,8 @@ python3 main.py \
     --imagecount 50 \
     --minres 0 0 \
     --maxres 9999 9999 \
-    --numworkers 5
+    --numworkers 1 \
+    --headless
 ```
 * `--keepfilename` can be added to keep the original URL image filenames
 * `--headless` can be added to disable Chrome GUI
