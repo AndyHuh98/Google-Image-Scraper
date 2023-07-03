@@ -54,7 +54,7 @@ class GoogleImageScraper():
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument('--remote-debugging-port=9222')
-                driver = webdriver.Chrome(webdriver_path, chrome_options=options)
+                driver = webdriver.Chrome(executable_path=webdriver_path, chrome_options=options)
                 driver.set_window_size(1400,1050)
                 #try going to www.google.com
                 driver.get("https://www.google.com")
