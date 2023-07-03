@@ -59,6 +59,7 @@ class GoogleImageScraper():
                     print(e)
                     continue
             except Exception as e:
+                print(e)
                 #update chromedriver
                 pattern = '(\d+\.\d+\.\d+\.\d+)'
                 version = list(set(re.findall(pattern, str(e))))[0]
