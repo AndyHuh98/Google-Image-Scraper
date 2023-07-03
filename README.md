@@ -41,7 +41,6 @@ imagecount=5
 headless=True 
 minres=(0, 0) 
 maxres=(9999, 9999) 
-imagecount=10 
 numworkers=1 
 keepfilename=False
 ````
