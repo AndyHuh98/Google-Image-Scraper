@@ -184,7 +184,7 @@ class GoogleImageScraper():
         for indx,image_url in enumerate(image_urls):
             try:
                 print("[INFO] Image url:%s"%(image_url))
-                search_string = ''.join(e for e in self.search_key if e.isalnum())
+                search_string = '_'.join(e for e in self.search_key if e.isalnum())
                 image = requests.get(image_url,timeout=5)
                 if image.status_code == 200:
                     with Image.open(io.BytesIO(image.content)) as image_from_web:
@@ -197,7 +197,7 @@ class GoogleImageScraper():
                                 #join filename and extension
                                 filename = "%s.%s"%(name,image_from_web.format.lower())
                             else:
-                                filename = "%s%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
 
                             image_path = os.path.join(self.image_path, filename)
                             print(
