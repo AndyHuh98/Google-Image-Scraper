@@ -197,7 +197,7 @@ class GoogleImageScraper():
                                 #join filename and extension
                                 filename = "%s.%s"%(name,image_from_web.format.lower())
                             else:
-                                filename = "%s%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
 
                             image_path = os.path.join(self.image_path, filename)
                             print(
