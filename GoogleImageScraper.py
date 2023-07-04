@@ -99,7 +99,7 @@ class GoogleImageScraper():
         indx_1 = 0
         indx_2 = 0
         search_string = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
-        time.sleep(3)
+        time.sleep(1)
         while self.number_of_images > count and missed_count < self.max_missed:
             if indx_2 > 0:
                 try:
@@ -161,12 +161,10 @@ class GoogleImageScraper():
                 element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
                 element.click()
                 print("[INFO] Loading next page")
-                time.sleep(2)
+                time.sleep(1)
             except Exception as e:
                 print(f"[ERROR] Exception when scrolling: {e}")
-                time.sleep(1)
-
-
+                time.sleep(0.1)
 
         self.driver.quit()
         print("[INFO] Google search ended")
