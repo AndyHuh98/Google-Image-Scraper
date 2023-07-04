@@ -184,8 +184,7 @@ class GoogleImageScraper():
         for indx,image_url in enumerate(image_urls):
             try:
                 print("[INFO] Image url:%s"%(image_url))
-                formatted_search_key = self.search_key.replace(' ', '_')
-                search_string = ''.join(e for e in formatted_search_key if e.isalnum() or e == '_')
+                search_string = self.search_key.replace(' ', '_')
                 image = requests.get(image_url,timeout=5)
                 if image.status_code == 200:
                     with Image.open(io.BytesIO(image.content)) as image_from_web:
