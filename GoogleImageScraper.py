@@ -53,7 +53,7 @@ class GoogleImageScraper():
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument('--remote-debugging-port=9222')
-                driver = webdriver.Chrome(executable_path="/usr/bin/chromedriver", chrome_options=options)
+                driver = webdriver.Chrome(executable_path=webdriver_path, chrome_options=options)
                 driver.set_window_size(1400,1050)
                 #try going to www.google.com
                 driver.get("https://www.google.com")
@@ -61,10 +61,10 @@ class GoogleImageScraper():
                     print("Trying WebDriverWait...")
                     WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "W0wltc"))).click()
                 except Exception as e:
-                    print(e)
+                    print(f"Exception waiting for element to be clickable: {e}")
                     continue
             except Exception as e:
-                print(e)
+                print(f"Exception initializing chrome driver: {e}")
                 #update chromedriver
                 pattern = '(\d+\.\d+\.\d+\.\d+)'
                 version = list(set(re.findall(pattern, str(e))))[0]
@@ -107,13 +107,15 @@ class GoogleImageScraper():
                     imgurl.click()
                     indx_2 = indx_2 + 1
                     missed_count = 0
-                except Exception:
+                except Exception as e:
+                    print(f"[ERROR] Exception finding image element using search_string: {e}")
                     try:
                         imgurl = self.driver.find_element(By.XPATH, search_string%(indx_1+1,1))
                         imgurl.click()
                         indx_2 = 1
                         indx_1 = indx_1 + 1
-                    except:
+                    except Exception as e:
+                        print(f"[ERROR] Exception finding image element using regex: {e}")
                         indx_2 = indx_2 + 1
                         missed_count = missed_count + 1
             else:
@@ -122,14 +124,16 @@ class GoogleImageScraper():
                     imgurl.click()
                     missed_count = 0
                     indx_1 = indx_1 + 1    
-                except Exception:
+                except Exception as e:
+                    print(f"[ERROR] Exception finding image element using search_string if indx_2 not > 0: {e}")
                     try:
                         imgurl = self.driver.find_element(By.XPATH, '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'%(indx_1,indx_2+1))
                         imgurl.click()
                         missed_count = 0
                         indx_2 = indx_2 + 1
                         search_string = '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'
-                    except Exception:
+                    except Exception as e:
+                        print(f"[ERROR] Exception finding image element using regex if indx_2 not > 0: {e}")
                         indx_1 = indx_1 + 1
                         missed_count = missed_count + 1
                     
@@ -147,8 +151,8 @@ class GoogleImageScraper():
                         image_urls.append(src_link)
                         count +=1
                         break
-            except Exception:
-                print("[INFO] Unable to get link")
+            except Exception as e:
+                print(f"[ERROR] Exception retrieving link: {e}")
 
             try:
                 #scroll page to load next image
@@ -157,9 +161,9 @@ class GoogleImageScraper():
                 element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
                 element.click()
                 print("[INFO] Loading next page")
-                time.sleep(3)
-            except Exception:
-                print("Exception scrolling...")
+                time.sleep(2)
+            except Exception as e:
+                print(f"[ERROR] Exception when scrolling: {e}")
                 time.sleep(1)
 
 
@@ -169,7 +173,6 @@ class GoogleImageScraper():
         return image_urls
 
     def save_images(self,image_urls, keep_filenames):
-        print(keep_filenames)
         #save images into file directory
         """
             This function takes in an array of image urls and save it into the given image path/directory.
@@ -202,7 +205,8 @@ class GoogleImageScraper():
                             print(
                                 f"[INFO] {self.search_key} \t {indx} \t Image saved at: {image_path}")
                             image_from_web.save(image_path)
-                        except OSError:
+                        except OSError as e:
+                            print(f"[ERROR] Exception encountered while extraction or saving image: {e}")
                             rgb_im = image_from_web.convert('RGB')
                             rgb_im.save(image_path)
                         image_resolution = image_from_web.size
@@ -213,7 +217,7 @@ class GoogleImageScraper():
 
                         image_from_web.close()
             except Exception as e:
-                print("[ERROR] Download failed: ",e)
+                print("[ERROR] Download failed: ", e)
                 pass
         print("--------------------------------------------------")
         print("[INFO] Downloads completed. Please note that some photos were not downloaded as they were not in the correct format (e.g. jpg, jpeg, png)")
