@@ -200,7 +200,10 @@ class GoogleImageScraper():
                                 #join filename and extension
                                 filename = "%s.%s"%(name,image_from_web.format.lower())
                             else:
-                                filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                try:
+                                    filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                except Exception as e:
+                                    print("[ERROR] error generating local filename:", e)
 
                             print("[INFO] Generating local path for file...")
                             image_path = os.path.join(self.image_path, filename)
