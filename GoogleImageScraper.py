@@ -14,7 +14,6 @@ from selenium.common.exceptions import NoSuchElementException
 
 #import helper libraries
 import time
-import urllib.request
 from urllib.parse import urlparse
 import os
 import requests
@@ -187,9 +186,8 @@ class GoogleImageScraper():
                 print("[INFO] Image url:%s"%(image_url))
                 search_string = self.search_key.replace(' ', '_')
                 image = requests.get(image_url,timeout=5)
-                print("[INFO] Image retrieved for {}_{}".format(search_string, indx))
-                print("[INFO] Image content {}", image.content)
                 if image.status_code == 200:
+                    print("[INFO] Image retrieved for {}_{}".format(search_string, indx))
                     try:
                         with Image.open(io.BytesIO(image.content)) as image_from_web:
                             try:
@@ -229,6 +227,8 @@ class GoogleImageScraper():
                             image_from_web.close()
                     except Exception as e:
                         print("[ERROR] Opening image file failed: ", e)
+                else:
+                    print("[INFO] Image request failed with status code {} and reason {}", image.status_code, image.reason)
             except Exception as e:
                 print("[ERROR] Download failed: ", e)
                 pass
