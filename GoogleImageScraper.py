@@ -228,7 +228,7 @@ class GoogleImageScraper():
                     except Exception as e:
                         print("[ERROR] Opening image file failed: ", e)
                 else:
-                    print("[INFO] Image request failed with status code {} and reason {}", image.status_code, image.reason)
+                    print("[INFO] Image request failed with status code {} and reason {}".format(image.status_code, image.reason))
             except Exception as e:
                 print("[ERROR] Download failed: ", e)
                 pass
