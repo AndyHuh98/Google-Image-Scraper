@@ -202,8 +202,11 @@ class GoogleImageScraper():
                             image_path = os.path.join(self.image_path, filename)
                             print(
                                 f"[INFO] {self.search_key} \t {indx} \t Image saved at: {image_path}")
-                            image_from_web.save(image_path)
-                        except OSError as e:
+                            try:
+                                image_from_web.save(image_path)
+                            except Exception as e:
+                                print("[ERROR] Saving image failed: ", e)
+                        except Exception as e:
                             print(f"[ERROR] Exception encountered while extraction or saving image: {e}")
                             rgb_im = image_from_web.convert('RGB')
                             rgb_im.save(image_path)
