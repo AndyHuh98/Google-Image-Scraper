@@ -46,8 +46,8 @@ if __name__ == "__main__":
     #Parameters
     number_of_images = args.imagecount               # Desired number of images
     headless = args.headless                     # True = No Chrome GUI
-    min_resolution = (args.minres[0], args.minres[1])             # Minimum desired image resolution
-    max_resolution = (args.maxres[0], args.maxres[1])       # Maximum desired image resolution
+    min_resolution = (int(args.minres[0]), int(args.minres[1]))             # Minimum desired image resolution
+    max_resolution = (int(args.maxres[0]), int(args.maxres[1]))       # Maximum desired image resolution
     max_missed = 10                   # Max number of failed images before exit
     number_of_workers = args.numworkers               # Number of "workers" used
     keep_filenames = args.keepfilename            # Keep original URL image filenames
