@@ -186,9 +186,11 @@ class GoogleImageScraper():
                 print("[INFO] Image url:%s"%(image_url))
                 search_string = self.search_key.replace(' ', '_')
                 image = requests.get(image_url,timeout=5)
+                print("[INFO] Image retrieved for %s"%(search_string))
                 if image.status_code == 200:
                     with Image.open(io.BytesIO(image.content)) as image_from_web:
                         try:
+                            print("[INFO] Generating local filename...")
                             if (keep_filenames):
                                 #extact filename without extension from URL
                                 o = urlparse(image_url)
@@ -199,6 +201,7 @@ class GoogleImageScraper():
                             else:
                                 filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
 
+                            print("[INFO] Generating local path for file...")
                             image_path = os.path.join(self.image_path, filename)
                             print(
                                 f"[INFO] {self.search_key} \t {indx} \t Image saved at: {image_path}")
