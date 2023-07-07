@@ -189,41 +189,45 @@ class GoogleImageScraper():
                 image = requests.get(image_url,timeout=5)
                 print("[INFO] Image retrieved for {}_{}".format(search_string, indx))
                 if image.status_code == 200:
-                    with Image.open(io.BytesIO(image.content)) as image_from_web:
-                        try:
-                            print("[INFO] Generating local filename...")
-                            if (keep_filenames):
-                                #extact filename without extension from URL
-                                o = urlparse(image_url)
-                                image_url = o.scheme + "://" + o.netloc + o.path
-                                name = os.path.splitext(os.path.basename(image_url))[0]
-                                #join filename and extension
-                                filename = "%s.%s"%(name,image_from_web.format.lower())
-                            else:
-                                try:
-                                    filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
-                                except Exception as e:
-                                    print("[ERROR] error generating local filename:", e)
-
-                            print("[INFO] Generating local path for file...")
-                            image_path = os.path.join(self.image_path, filename)
-                            print(
-                                f"[INFO] {self.search_key} \t {indx} \t Image saved at: {image_path}")
+                    try:
+                        with Image.open(io.BytesIO(image.content)) as image_from_web:
                             try:
-                                image_from_web.save(image_path)
-                            except Exception as e:
-                                print("[ERROR] Saving image failed: ", e)
-                        except Exception as e:
-                            print(f"[ERROR] Exception encountered while extraction or saving image: {e}")
-                            rgb_im = image_from_web.convert('RGB')
-                            rgb_im.save(image_path)
-                        image_resolution = image_from_web.size
-                        if image_resolution != None:
-                            if image_resolution[0]<self.min_resolution[0] or image_resolution[1]<self.min_resolution[1] or image_resolution[0]>self.max_resolution[0] or image_resolution[1]>self.max_resolution[1]:
-                                image_from_web.close()
-                                os.remove(image_path)
+                                print("[INFO] Generating local filename...")
+                                if (keep_filenames):
+                                    #extact filename without extension from URL
+                                    o = urlparse(image_url)
+                                    image_url = o.scheme + "://" + o.netloc + o.path
+                                    name = os.path.splitext(os.path.basename(image_url))[0]
+                                    #join filename and extension
+                                    filename = "%s.%s"%(name,image_from_web.format.lower())
+                                else:
+                                    try:
+                                        filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                        print("[INFO] Generated filename as:", filename)
+                                    except Exception as e:
+                                        print("[ERROR] error generating local filename:", e)
 
-                        image_from_web.close()
+                                print("[INFO] Generating local path for file...")
+                                image_path = os.path.join(self.image_path, filename)
+                                print(
+                                    f"[INFO] {self.search_key} \t {indx} \t Image saved at: {image_path}")
+                                try:
+                                    image_from_web.save(image_path)
+                                except Exception as e:
+                                    print("[ERROR] Saving image failed: ", e)
+                            except Exception as e:
+                                print(f"[ERROR] Exception encountered while extraction or saving image: {e}")
+                                rgb_im = image_from_web.convert('RGB')
+                                rgb_im.save(image_path)
+                            image_resolution = image_from_web.size
+                            if image_resolution != None:
+                                if image_resolution[0]<self.min_resolution[0] or image_resolution[1]<self.min_resolution[1] or image_resolution[0]>self.max_resolution[0] or image_resolution[1]>self.max_resolution[1]:
+                                    image_from_web.close()
+                                    os.remove(image_path)
+
+                            image_from_web.close()
+                    except Exception as e:
+                        print("[ERROR] Opening image file failed: ", e)
             except Exception as e:
                 print("[ERROR] Download failed: ", e)
                 pass
