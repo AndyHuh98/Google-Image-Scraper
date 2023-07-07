@@ -180,13 +180,14 @@ class GoogleImageScraper():
                 google_image_scraper.save_images(image_urls)
 
         """
-        print("[INFO] Saving image, please wait...")
+        print("[INFO] Saving images, please wait...")
         for indx,image_url in enumerate(image_urls):
             try:
+                print("------------------------------------")
                 print("[INFO] Image url:%s"%(image_url))
                 search_string = self.search_key.replace(' ', '_')
                 image = requests.get(image_url,timeout=5)
-                print("[INFO] Image retrieved for %s"%(search_string))
+                print("[INFO] Image retrieved for {}_{}".format(search_string, indx))
                 if image.status_code == 200:
                     with Image.open(io.BytesIO(image.content)) as image_from_web:
                         try:
