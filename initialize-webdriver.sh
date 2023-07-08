@@ -1,8 +1,5 @@
 # https://github.com/kaliiiiiiiiii/Selenium-Profiles/issues/10#issuecomment-1387618009
-
 # Ubuntu no longer distributes chromium-browser outside of snap
-#
-# Proposed solution: https://askubuntu.com/questions/1204571/how-to-install-chromium-without-snap
 
 # Add debian buster
 cat > /etc/apt/sources.list.d/debian.list <<'EOF'

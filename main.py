@@ -31,7 +31,11 @@ def worker_thread(search_key):
     #Release resources
     del image_scraper
 
-def initialize_webdriver(webdriver_path):
+def initialize_colabs_webdriver(webdriver_path, is_colabs):
+    if not is_colabs:
+        print("[INFO] Environment is not colabs, initializing webdriver following normal procedure and not using Colabs compatible distribution.")
+        return
+    
     try:
         if not os.path.exists(webdriver_path):
             webdriver_init_script_path = './initialize-webdriver.sh'
@@ -44,15 +48,15 @@ def initialize_webdriver(webdriver_path):
         print("[ERROR] Error when attempting to initialize webdriver.")
 
 if __name__ == "__main__":
-    #Define file path
-    webdriver_path = "/usr/bin/chromedriver"
-    initialize_webdriver(webdriver_path)
-
-    image_path = os.path.normpath(os.path.join(os.getcwd(), 'photos'))
-
     #Get arguments from CLI
     parser = initialize_parser()
     args = parse_args(parser)
+
+    #Define file path
+    webdriver_path = "/usr/bin/chromedriver"
+    initialize_colabs_webdriver(webdriver_path, args.colabs)
+
+    image_path = os.path.normpath(os.path.join(os.getcwd(), 'photos'))
 
     #Add new search key into array ["cat","t-shirt","apple","orange","pear","fish"]
     search_keys = list(set(args.searchkeys))
