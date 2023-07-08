@@ -31,17 +31,23 @@ def worker_thread(search_key):
     #Release resources
     del image_scraper
 
-if __name__ == "__main__":
+def initialize_webdriver(webdriver_path):
     try:
-        webdriver_init_script_path = './initialize-webdriver.sh'
-        os.chmod(webdriver_init_script_path, 0o111)
-        subprocess.run(webdriver_init_script_path, shell=True, check=True)
+        if not os.path.exists(webdriver_path):
+            webdriver_init_script_path = './initialize-webdriver.sh'
+            os.chmod(webdriver_init_script_path, 0o111)
+            subprocess.run(webdriver_init_script_path, shell=True, check=True)
+            print(f"Webdriver initialized at webdriver_path: {webdriver_path}")
+        else:
+            print("[INFO] Webdriver already exists at {}".format(webdriver_path))
     except Exception as e:
         print("[ERROR] Error when attempting to initialize webdriver.")
 
+if __name__ == "__main__":
     #Define file path
     webdriver_path = "/usr/bin/chromedriver"
-    print(f"webdriver_path: {webdriver_path}")
+    initialize_webdriver(webdriver_path)
+
     image_path = os.path.normpath(os.path.join(os.getcwd(), 'photos'))
 
     #Get arguments from CLI
