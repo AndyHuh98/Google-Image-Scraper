@@ -54,7 +54,8 @@ if __name__ == "__main__":
 
     #Define file path
     webdriver_path = "/usr/bin/chromedriver"
-    initialize_colabs_webdriver(webdriver_path, args.colabs)
+    is_colabs = args.colabs
+    initialize_colabs_webdriver(webdriver_path, is_colabs)
 
     image_path = os.path.normpath(os.path.join(os.getcwd(), 'photos'))
 
