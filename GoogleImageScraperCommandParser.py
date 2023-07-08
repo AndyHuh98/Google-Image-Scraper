@@ -13,7 +13,7 @@ def initialize_parser():
     parser.add_argument("--maxres", nargs=2, default=[9999,9999], help="Maximum desired image resolution. Parser will convert to an (x, y) value pair. [EXAMPLE: \`--maxres 2000 2000\`]")
     parser.add_argument("--numworkers", type=int, default=1, help="Number of workers used for parallel processing. [EXAMPLE: \`--numworkers 5\`]")
     parser.add_argument("--keepfilename", action="store_true", help="Keeps original URL image filenames. Defaults to False. [EXAMPLE:\`--keepfilename\`]")
-    parser.add_argument("--colabs", action="store_false", help="Flag to tell script that it's running in a Colabs environment.")
+    parser.add_argument("--colabs", action="store_true", help="Flag to tell script that it's running in a Colabs environment.")
 
     return parser
 
