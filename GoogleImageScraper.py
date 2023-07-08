@@ -25,7 +25,7 @@ import re
 import patch
 
 class GoogleImageScraper():
-    def __init__(self, webdriver_path, image_path, search_key="cat", number_of_images=1, headless=True, min_resolution=(0, 0), max_resolution=(1920, 1080), max_missed=10):
+    def __init__(self, webdriver_path, image_path, search_key="cat", number_of_images=1, headless=True, min_resolution=(0, 0), max_resolution=(1920, 1080), max_missed=10, is_colabs=False):
         #check parameter types
         image_path = os.path.join(image_path, search_key)
         if (type(number_of_images)!=int):
@@ -35,8 +35,9 @@ class GoogleImageScraper():
             print("[INFO] Image path not found. Creating a new folder.")
             os.makedirs(image_path)
             
-        #check if chromedriver is installed
-        if (not os.path.isfile(webdriver_path)):
+        #check if chromedriver is installed and install it if not (this is the normal, non Colabs procedure)
+        if (not os.path.isfile(webdriver_path) and not is_colabs):
+            print("[INFO] Downloading latest chromedriver as part of normal, non Colabs execution.")
             is_patched = patch.download_lastest_chromedriver()
             if (not is_patched):
                 exit("[ERR] Please update the chromedriver.exe in the webdriver folder according to your chrome version:https://chromedriver.chromium.org/downloads")

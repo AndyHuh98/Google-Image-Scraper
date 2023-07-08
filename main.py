@@ -24,7 +24,8 @@ def worker_thread(search_key):
         headless, 
         min_resolution, 
         max_resolution, 
-        max_missed)
+        max_missed,
+        is_colabs)
     image_urls = image_scraper.find_image_urls()
     image_scraper.save_images(image_urls, keep_filenames)
 
@@ -33,7 +34,7 @@ def worker_thread(search_key):
 
 def initialize_colabs_webdriver(webdriver_path, is_colabs):
     if not is_colabs:
-        print("[INFO] Environment is not colabs, initializing webdriver following normal procedure and not using Colabs compatible distribution.")
+        print("[INFO] Environment is not colabs, initializing webdriver following normal procedure and not using Colabs compatible distribution at {}.".format(webdriver_path))
         return
     
     try:
@@ -53,8 +54,11 @@ if __name__ == "__main__":
     args = parse_args(parser)
 
     #Define file path
-    webdriver_path = "/usr/bin/chromedriver"
     is_colabs = args.colabs
+    if is_colabs:
+        webdriver_path = "/usr/bin/chromedriver"
+    else:
+        webdriver_path = os.path.normpath(os.path.join(os.getcwd(), 'webdriver', webdriver_executable()))
     initialize_colabs_webdriver(webdriver_path, is_colabs)
 
     image_path = os.path.normpath(os.path.join(os.getcwd(), 'photos'))
