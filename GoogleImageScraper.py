@@ -101,70 +101,80 @@ class GoogleImageScraper():
         xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
         time.sleep(1)
         while self.number_of_images > count and missed_count < self.max_missed:
+            element_found = False
             if indx_2 > 0:
                 try:
-                    imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1))
-                    imgurl.click()
+                    print("[INFO] Attempting to find element using xpath_expression")
+                    img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1))
+                    img_element.click()
                     indx_2 = indx_2 + 1
                     missed_count = 0
+                    element_found = True
                 except Exception as e:
                     print(f"[ERROR] Exception finding image element using xpath_expression: {e}")
                     try:
-                        imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
-                        imgurl.click()
+                        print("[INFO] Attempting to get the next image element in the results instead.")
+                        img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
+                        img_element.click()
                         indx_2 = 1
                         indx_1 = indx_1 + 1
+                        element_found = True
                     except Exception as e:
-                        print(f"[ERROR] Exception finding image element using regex: {e}")
+                        print(f"[ERROR] Failed to get the next image element as well. Skipping this iteration and adding to the miss count: {e}")
                         indx_2 = indx_2 + 1
                         missed_count = missed_count + 1
             else:
                 try:
-                    imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
-                    imgurl.click()
+                    print("[INFO] First iteration. Attempting to find element using xpath_expression.")
+                    img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
+                    img_element.click()
                     missed_count = 0
                     indx_1 = indx_1 + 1    
+                    element_found = True
                 except Exception as e:
                     print(f"[ERROR] Exception finding image element using xpath_expression if indx_2 not > 0: {e}")
                     try:
-                        imgurl = self.driver.find_element(By.XPATH, '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'%(indx_1,indx_2+1))
-                        imgurl.click()
+                        print("[INFO] Attempting to find image using the an extra nested div child. If successful, set xpath_expression to contain the extra nested child for future searches.")
+                        img_element = self.driver.find_element(By.XPATH, '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'%(indx_1,indx_2+1))
+                        img_element.click()
                         missed_count = 0
                         indx_2 = indx_2 + 1
                         xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'
+                        element_found = True
                     except Exception as e:
-                        print(f"[ERROR] Exception finding image element using regex if indx_2 not > 0: {e}")
+                        print(f"[ERROR] Exception finding image element using xpath_expression with an extra nested div child. Adding to miss count. {e}")
                         indx_1 = indx_1 + 1
                         missed_count = missed_count + 1
-                    
-            try:
-                #select image from the popup
-                time.sleep(1)
-                class_names = ["n3VNCb","iPVvYb","r48jcc","pT0Scc"]
-                images = [self.driver.find_elements(By.CLASS_NAME, class_name) for class_name in class_names if len(self.driver.find_elements(By.CLASS_NAME, class_name)) != 0 ][0]
-                for image in images:
-                    #only download images that starts with http
-                    src_link = image.get_attribute("src")
-                    if(("http" in src_link) and (not "encrypted" in src_link)):
-                        print(
-                            f"[INFO] {self.search_key} \t #{count} \t {src_link}")
-                        image_urls.append(src_link)
-                        count +=1
-                        break
-            except Exception as e:
-                print(f"[ERROR] Exception retrieving link: {e}")
+            if element_found:
+                try:
+                    print("[INFO] Attempting to select image from popup after clicking.")
+                    #select image from the popup
+                    time.sleep(1)
+                    class_names = ["n3VNCb","iPVvYb","r48jcc","pT0Scc"]
+                    images = [self.driver.find_elements(By.CLASS_NAME, class_name) for class_name in class_names if len(self.driver.find_elements(By.CLASS_NAME, class_name)) != 0 ][0]
+                    for image in images:
+                        #only download images that starts with http
+                        src_link = image.get_attribute("src")
+                        if(("http" in src_link) and (not "encrypted" in src_link)):
+                            print(
+                                f"[INFO] {self.search_key} \t #{count} \t {src_link}")
+                            image_urls.append(src_link)
+                            count +=1
+                            break
+                except Exception as e:
+                    print(f"[ERROR] Exception retrieving link: {e}")
 
-            try:
-                #scroll page to load next image
-                if(count%3==0):
-                    self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
-                element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
-                element.click()
-                print("[INFO] Loading next page")
-                time.sleep(1)
-            except Exception as e:
-                print(f"[ERROR] Exception when scrolling: {e}")
-                time.sleep(0.1)
+                try:
+                    #scroll page to load next image
+                    if(count%3==0):
+                        self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
+                    element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
+                    element.click()
+                    print("[INFO] Loading next page")
+                    time.sleep(1)
+                except Exception as e:
+                    print(f"[ERROR] Exception when scrolling: {e}")
+                    time.sleep(0.1)
 
         self.driver.quit()
         print("[INFO] Google search ended")

@@ -132,8 +132,13 @@ The basis of this method revolves around the following XPath expression: `xpath_
 
 1. `//*` - find any element of any type in the document that matches the subsequent steps of the expression.
 2. `[@id="islrg"]` - gets an element with the id `islrg`
-   ![](./documentation/isLrg.png)
+   ![](./documentation/2.%20islrg.png)
 3. `div[1]` - gets the first child `div` of the element above.
-   ![](./documentation/div[1]%20of%20islrg.png)
+   ![](./documentation/3.%20div[1]%20of%20islrg.png)
+4. `div[%s]` - gets the `'s'th` child `div` of the element above. The `%s` is supplied by the looping within `find_image_urls`. 
+   * `imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1))`
+   * ![](./documentation/4.%20div[%s]%20of%20div[1].png) 
+
+5.  `a[1] - 
 
 
