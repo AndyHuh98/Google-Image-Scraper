@@ -13,6 +13,7 @@ import concurrent.futures
 from GoogleImageScraper import GoogleImageScraper
 from GoogleImageScraperCommandParser import *
 from patch import webdriver_executable
+import subprocess
 
 def worker_thread(search_key):
     image_scraper = GoogleImageScraper(
@@ -31,6 +32,11 @@ def worker_thread(search_key):
     del image_scraper
 
 if __name__ == "__main__":
+    try:
+        subprocess.run('./initialize-webdriver.sh', shell=True, check=True)
+    except Exception as e:
+        print("[ERROR] Error when attempting to initialize webdriver.")
+
     #Define file path
     webdriver_path = "/usr/bin/chromedriver"
     print(f"webdriver_path: {webdriver_path}")
