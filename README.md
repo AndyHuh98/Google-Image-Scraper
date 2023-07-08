@@ -5,12 +5,13 @@ A library created to scrape Google Images.<br>
 If you are looking for other image scrapers, JJLimmm has created image scrapers for Gettyimages, Shutterstock, and Bing. <br>
 Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
 
-## Pre-requisites:
+## Setup and Execution
+### Pre-requisites:
 1. Google Chrome
 2. Python3 packages (Pillow, Selenium, Requests)
 3. Windows OS (Other OS is not tested)
 
-## Setup:
+### Setup:
 1. Open command prompt
 2. Clone this repository (or [download](https://github.com/AndyHuh98/Google-Image-Scraper/archive/refs/heads/master.zip))
     ```
@@ -25,11 +26,11 @@ Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
     python main.py
     ```
 
-## Usage:
+### Usage:
 This project was created to bypass Google Chrome's new restrictions on web scraping from Google Images. 
 To use it, define your desired parameters in main.py and run through the command line:
 
-### Running the script with default parameters:
+#### Running the script with default parameters:
 ```
 python main.py
 ```
@@ -45,7 +46,7 @@ numworkers=1
 keepfilename=False
 ````
 
-### Running the script through CLI:
+#### Running the script through CLI:
 *replace these arguments with your own preferences*
 ```
 python3 main.py \
@@ -54,69 +55,85 @@ python3 main.py \
     --minres 0 0 \
     --maxres 9999 9999 \
     --numworkers 1 \
-    --headless
+    --headless \
+    --colabs
 ```
 * `--keepfilename` can be added to keep the original URL image filenames
 * `--headless` can be added to disable Chrome GUI
 
-### Running in Colabs
-Colabs has some issues with ChromeDriver as "Ubuntu 20.04+ no longer distributes chromium-browser outside of a snap package, you can install a compatible version from the Debian buster repository". Adding the following to your Colabs notebook
+#### Running in Colabs
+Add the following cells:
+
 ````
-# https://github.com/kaliiiiiiiiii/Selenium-Profiles/issues/10#issuecomment-1387618009
-%%shell
-# Ubuntu no longer distributes chromium-browser outside of snap
-#
-# Proposed solution: https://askubuntu.com/questions/1204571/how-to-install-chromium-without-snap
-
-# Add debian buster
-cat > /etc/apt/sources.list.d/debian.list <<'EOF'
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster.gpg] http://deb.debian.org/debian buster main
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-buster-updates.gpg] http://deb.debian.org/debian buster-updates main
-deb [arch=amd64 signed-by=/usr/share/keyrings/debian-security-buster.gpg] http://deb.debian.org/debian-security buster/updates main
-EOF
-
-# Add keys
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DCC9EFBF77E11517
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 112695A0E562B32A
-
-apt-key export 77E11517 | gpg --dearmour -o /usr/share/keyrings/debian-buster.gpg
-apt-key export 22F3D138 | gpg --dearmour -o /usr/share/keyrings/debian-buster-updates.gpg
-apt-key export E562B32A | gpg --dearmour -o /usr/share/keyrings/debian-security-buster.gpg
-
-# Prefer debian repo for chromium* packages only
-# Note the double-blank lines between entries
-cat > /etc/apt/preferences.d/chromium.pref << 'EOF'
-Package: *
-Pin: release a=eoan
-Pin-Priority: 500
-
-
-Package: *
-Pin: origin "deb.debian.org"
-Pin-Priority: 300
-
-
-Package: chromium*
-Pin: origin "deb.debian.org"
-Pin-Priority: 700
-EOF
-
-# Install chromium and chromium-driver
-apt-get update
-apt-get install chromium chromium-driver
-
-# Install selenium
-pip install selenium
+# Initialize scraper
+!git clone https://github.com/AndyHuh98/Google-Image-Scraper
+!pip install -r Google-Image-Scraper/requirements.txt
 ````
 
-## Youtube Video:
+````
+# Execute Image Scraper
+!cd Google-Image-Scraper/ && git pull && rm -rf photos && python3 main.py \
+    --searchkeys "cat houses" "doll houses" \
+    --imagecount 15 \
+    --minres 0 0 \
+    --maxres 9999 9999 \
+    --numworkers 1 \
+    --headless
+````
+
+### Youtube Video:
 [![IMAGE ALT TEXT](https://github.com/ohyicong/Google-Image-Scraper/blob/master/youtube_thumbnail.PNG)](https://youtu.be/QZn_ZxpsIw4 "Google Image Scraper")
 
 
-## IMPORTANT:
+### IMPORTANT:
 Although it says so in the video, this program will not run through VSCode. It must be run in the command line.
 
 This program will install an updated webdriver automatically. There is no need to install your own.
 
-### Please like, subscribe, and share if you found my project helpful! 
+## How does it work?
+Somewhat sequential step by step of the key parts of the script execution. Note that some of these functions may change names, and documentation may go out of date - however, this is my best attempt to track what this script is doing (because the code is not clean whatsoever).
+
+### Initializing Colabs Webdriver
+The Python script first runs `initialize_colabs_webdriver` to get around Colabs Chromedriver errors. If not a Colabs environment, it downloads the latest Chromedriver later on.
+
+### Scraper execution
+After attempting to initialize Colabs webdriver:
+* the script creates a `photos` folder within the package itself to hold the scraped images.
+* the script takes in the command line arguments parsed (or the default values for the arguments) to initialize the GoogleImageScraper
+* begins execution across available threads, of the `worker_threads` method which takes in the `search_keys` from the CLI arguments.
+* each function call of `worker_threads`:
+  * instantiates a `GoogleImageScraper` using accessible variables assigned in the main method scope, for each `search_key`.
+  * finds image URLs using the GoogleImageScraper in one step
+  * downloads the full list of image URLs using the GoogleImageScraper in the second step
+* releases resources at the end of execution
+
+### GoogleImageScraper internals
+If the environment isn't Colabs, during instantiation, the GoogleImageScraper class attempts to initialize the webdriver and download the latest version.
+
+#### Instantiation
+Nothing out of the ordinary here, outside of one key part where it sets the base URL to execute the image scraping from. 
+
+````
+self.url = "https://www.google.com/search?q=%s&source=lnms&tbm=isch&sa=X&ved=2ahUKEwie44_AnqLpAhUhBWMBHUFGD90Q_AUoAXoECBUQAw&biw=1920&bih=947"%(search_key)
+````
+
+The current query parameters are as follows:
+* `q`: This parameter specifies the search query. In this case, the value is "cats", indicating that the search is for images related to cats.
+* `source`: This parameter represents the source of the search. In this case, the value is "lnms", which stands for "linked normal search". It indicates that the search was initiated from the normal web search page.
+* `tbm`: This parameter specifies the type of search being performed. In this case, the value is "isch", which stands for "image search". It indicates that the search is for images.
+* `sa`: This parameter contains additional search parameters or settings. The value "X" in this case doesn't have a specific meaning as it could be a unique identifier or a generic value used by Google's search engine.
+* `ved`: This parameter represents a version identifier for tracking purposes. The value "2ahUKEwie44_AnqLpAhUhBWMBHUFGD90Q_AUoAXoECBUQAw" is specific to the session or request and doesn't have a meaningful interpretation outside of Google's internal systems.
+* `biw` and `bih`: These parameters specify the browser window width and height, respectively, in pixels. In this case, the values are "1920" for the browser window width and "947" for the browser window height.
+
+#### `find_image_urls`
+This method returns a list of image urls for a search query from Google.
+
+The basis of this method revolves around the following XPath expression: `xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'`. [XPath](https://en.wikipedia.org/wiki/XPath), at least to my understanding, can just be read somewhat like a regular path - each "selector" is separated by a `/` and represents a child node element of the previous element. There are some special specifiers that I'm not familiar with, but this one basically says:
+
+1. `//*` - find any element of any type in the document that matches the subsequent steps of the expression.
+2. `[@id="islrg"]` - gets an element with the id `islrg`
+   ![](./documentation/isLrg.png)
+3. `div[1]` - gets the first child `div` of the element above.
+   ![](./documentation/div[1]%20of%20islrg.png)
+
+

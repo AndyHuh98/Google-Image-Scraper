@@ -98,19 +98,19 @@ class GoogleImageScraper():
         missed_count = 0
         indx_1 = 0
         indx_2 = 0
-        search_string = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
+        xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
         time.sleep(1)
         while self.number_of_images > count and missed_count < self.max_missed:
             if indx_2 > 0:
                 try:
-                    imgurl = self.driver.find_element(By.XPATH, search_string%(indx_1,indx_2+1))
+                    imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1,indx_2+1))
                     imgurl.click()
                     indx_2 = indx_2 + 1
                     missed_count = 0
                 except Exception as e:
-                    print(f"[ERROR] Exception finding image element using search_string: {e}")
+                    print(f"[ERROR] Exception finding image element using xpath_expression: {e}")
                     try:
-                        imgurl = self.driver.find_element(By.XPATH, search_string%(indx_1+1,1))
+                        imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1,1))
                         imgurl.click()
                         indx_2 = 1
                         indx_1 = indx_1 + 1
@@ -120,18 +120,18 @@ class GoogleImageScraper():
                         missed_count = missed_count + 1
             else:
                 try:
-                    imgurl = self.driver.find_element(By.XPATH, search_string%(indx_1+1))
+                    imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
                     imgurl.click()
                     missed_count = 0
                     indx_1 = indx_1 + 1    
                 except Exception as e:
-                    print(f"[ERROR] Exception finding image element using search_string if indx_2 not > 0: {e}")
+                    print(f"[ERROR] Exception finding image element using xpath_expression if indx_2 not > 0: {e}")
                     try:
                         imgurl = self.driver.find_element(By.XPATH, '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'%(indx_1,indx_2+1))
                         imgurl.click()
                         missed_count = 0
                         indx_2 = indx_2 + 1
-                        search_string = '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'
+                        xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'
                     except Exception as e:
                         print(f"[ERROR] Exception finding image element using regex if indx_2 not > 0: {e}")
                         indx_1 = indx_1 + 1
