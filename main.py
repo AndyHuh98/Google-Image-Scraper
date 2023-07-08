@@ -33,7 +33,9 @@ def worker_thread(search_key):
 
 if __name__ == "__main__":
     try:
-        subprocess.run('./initialize-webdriver.sh', shell=True, check=True)
+        webdriver_init_script_path = './initialize-webdriver.sh'
+        os.chmod(webdriver_init_script_path, 0o111)
+        subprocess.run(webdriver_init_script_path, shell=True, check=True)
     except Exception as e:
         print("[ERROR] Error when attempting to initialize webdriver.")
 
