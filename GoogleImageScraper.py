@@ -171,7 +171,7 @@ class GoogleImageScraper():
 
                 try:
                     #scroll page to load next image
-                    if(len(image_urls)%3==0):
+                    if(len(image_urls)%15==0):
                         self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
                         print("[INFO] Loading next page")
                         time.sleep(1)
