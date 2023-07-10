@@ -165,6 +165,7 @@ class GoogleImageScraper():
                             print(f"[INFO] {self.search_key} \t #{count} \t {src_link}")
                             image_urls.append(src_link)
                             count += 1
+                            print("[INFO] Image found.")
                             break
                 except Exception as e:
                     print(f"[ERROR] Exception retrieving link: {e}")
@@ -173,8 +174,6 @@ class GoogleImageScraper():
                     #scroll page to load next image
                     if(count%3==0):
                         self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
-                    element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
-                    element.click()
                     print("[INFO] Loading next page")
                     time.sleep(1)
                 except Exception as e:
