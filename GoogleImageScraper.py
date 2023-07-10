@@ -162,7 +162,7 @@ class GoogleImageScraper():
                     for image in images:
                         src_link = image.get_attribute("src")
                         if src_link.startswith("http") and "encrypted" not in src_link:
-                            print(f"[INFO] {self.search_key} \t #{count} \t {src_link}")
+                            print(f"[INFO] {self.search_key} \t #{len(image_urls)} \t {src_link}")
                             image_urls.append(src_link)
                             print("[INFO] Image found.")
                             break
