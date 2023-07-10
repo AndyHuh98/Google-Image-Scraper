@@ -101,6 +101,7 @@ class GoogleImageScraper():
         xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
         time.sleep(1)
         while self.number_of_images > count and missed_count < self.max_missed:
+            print("------------------------------------")
             element_found = False
             if indx_2 > 0:
                 try:
