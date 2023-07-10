@@ -175,8 +175,8 @@ class GoogleImageScraper():
                     #scroll page to load next image
                     if(count%3==0):
                         self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
-                    print("[INFO] Loading next page")
-                    time.sleep(1)
+                        print("[INFO] Loading next page")
+                        time.sleep(1)
                 except Exception as e:
                     print(f"[ERROR] Exception when scrolling: {e}")
                     time.sleep(0.1)
