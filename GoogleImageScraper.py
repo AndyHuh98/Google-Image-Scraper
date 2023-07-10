@@ -94,13 +94,12 @@ class GoogleImageScraper():
         print("[INFO] Gathering image links")
         self.driver.get(self.url)
         image_urls=[]
-        count = 0
         missed_count = 0
         indx_1 = 0
         indx_2 = 0
         xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'
         time.sleep(1)
-        while self.number_of_images > count and missed_count < self.max_missed:
+        while self.number_of_images > len(image_urls) and missed_count < self.max_missed:
             print("------------------------------------")
             element_found = False
             if indx_2 > 0:
@@ -165,7 +164,6 @@ class GoogleImageScraper():
                         if src_link.startswith("http") and "encrypted" not in src_link:
                             print(f"[INFO] {self.search_key} \t #{count} \t {src_link}")
                             image_urls.append(src_link)
-                            count += 1
                             print("[INFO] Image found.")
                             break
                 except Exception as e:
@@ -173,7 +171,7 @@ class GoogleImageScraper():
 
                 try:
                     #scroll page to load next image
-                    if(count%3==0):
+                    if(len(image_urls)%3==0):
                         self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
                         print("[INFO] Loading next page")
                         time.sleep(1)
