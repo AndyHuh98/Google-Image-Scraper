@@ -145,21 +145,26 @@ class GoogleImageScraper():
                         print(f"[ERROR] Exception finding image element using xpath_expression with an extra nested div child. Adding to miss count. {e}")
                         indx_1 = indx_1 + 1
                         missed_count = missed_count + 1
+
             if element_found:
                 try:
                     print("[INFO] Attempting to select image from popup after clicking.")
                     #select image from the popup
                     time.sleep(1)
-                    class_names = ["n3VNCb","iPVvYb","r48jcc","pT0Scc"]
-                    images = [self.driver.find_elements(By.CLASS_NAME, class_name) for class_name in class_names if len(self.driver.find_elements(By.CLASS_NAME, class_name)) != 0 ][0]
+                    class_names = ["iPVvYb","r48jcc","pT0Scc"]
+                    images = []
+                    for class_name in class_names:
+                        elements = self.driver.find_elements(By.CLASS_NAME, class_name)
+                        if elements:
+                            images = elements
+                            break
+
                     for image in images:
-                        #only download images that starts with http
                         src_link = image.get_attribute("src")
-                        if(("http" in src_link) and (not "encrypted" in src_link)):
-                            print(
-                                f"[INFO] {self.search_key} \t #{count} \t {src_link}")
+                        if src_link.startswith("http") and "encrypted" not in src_link:
+                            print(f"[INFO] {self.search_key} \t #{count} \t {src_link}")
                             image_urls.append(src_link)
-                            count +=1
+                            count += 1
                             break
                 except Exception as e:
                     print(f"[ERROR] Exception retrieving link: {e}")
@@ -175,6 +180,8 @@ class GoogleImageScraper():
                 except Exception as e:
                     print(f"[ERROR] Exception when scrolling: {e}")
                     time.sleep(0.1)
+            else:
+                print("[INFO] Element not found, skipping iteration.")
 
         self.driver.quit()
         print("[INFO] Google search ended")

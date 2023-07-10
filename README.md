@@ -90,13 +90,13 @@ Although it says so in the video, this program will not run through VSCode. It m
 
 This program will install an updated webdriver automatically. There is no need to install your own.
 
-## How does it work?
+# How does it work?
 Somewhat sequential step by step of the key parts of the script execution. Note that some of these functions may change names, and documentation may go out of date - however, this is my best attempt to track what this script is doing (because the code is not clean whatsoever).
 
-### Initializing Colabs Webdriver
+## Initializing Colabs Webdriver
 The Python script first runs `initialize_colabs_webdriver` to get around Colabs Chromedriver errors. If not a Colabs environment, it downloads the latest Chromedriver later on.
 
-### Scraper execution
+## Scraper execution
 After attempting to initialize Colabs webdriver:
 * the script creates a `photos` folder within the package itself to hold the scraped images.
 * the script takes in the command line arguments parsed (or the default values for the arguments) to initialize the GoogleImageScraper
@@ -107,17 +107,20 @@ After attempting to initialize Colabs webdriver:
   * downloads the full list of image URLs using the GoogleImageScraper in the second step
 * releases resources at the end of execution
 
-### GoogleImageScraper internals
+## GoogleImageScraper internals
 If the environment isn't Colabs, during instantiation, the GoogleImageScraper class attempts to initialize the webdriver and download the latest version.
 
-#### Instantiation
+### Instantiation
 Nothing out of the ordinary here, outside of one key part where it sets the base URL to execute the image scraping from. 
 
 ````
 self.url = "https://www.google.com/search?q=%s&source=lnms&tbm=isch&sa=X&ved=2ahUKEwie44_AnqLpAhUhBWMBHUFGD90Q_AUoAXoECBUQAw&biw=1920&bih=947"%(search_key)
 ````
 
+<details>
+<summary>Breakdown of the query parameters</summary>
 The current query parameters are as follows:
+
 * `q`: This parameter specifies the search query. In this case, the value is "cats", indicating that the search is for images related to cats.
 * `source`: This parameter represents the source of the search. In this case, the value is "lnms", which stands for "linked normal search". It indicates that the search was initiated from the normal web search page.
 * `tbm`: This parameter specifies the type of search being performed. In this case, the value is "isch", which stands for "image search". It indicates that the search is for images.
@@ -125,20 +128,34 @@ The current query parameters are as follows:
 * `ved`: This parameter represents a version identifier for tracking purposes. The value "2ahUKEwie44_AnqLpAhUhBWMBHUFGD90Q_AUoAXoECBUQAw" is specific to the session or request and doesn't have a meaningful interpretation outside of Google's internal systems.
 * `biw` and `bih`: These parameters specify the browser window width and height, respectively, in pixels. In this case, the values are "1920" for the browser window width and "947" for the browser window height.
 
-#### `find_image_urls`
+</details>
+
+### `find_image_urls` method breakdown
 This method returns a list of image urls for a search query from Google.
 
-The basis of this method revolves around the following XPath expression: `xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'`. [XPath](https://en.wikipedia.org/wiki/XPath), at least to my understanding, can just be read somewhat like a regular path - each "selector" is separated by a `/` and represents a child node element of the previous element. There are some special specifiers that I'm not familiar with, but this one basically says:
+The basis of this method revolves around the following XPath expression: `xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'`. [XPath](https://en.wikipedia.org/wiki/XPath), at least to my understanding, can just be read somewhat like a regular path - each "selector" is separated by a `/` and represents a child node element of the previous element. 
+
+<details>
+<summary>Explanation of the XPath expression (with images!)</summary>
 
 1. `//*` - find any element of any type in the document that matches the subsequent steps of the expression.
 2. `[@id="islrg"]` - gets an element with the id `islrg`
-   ![](./documentation/2.%20islrg.png)
+   ![](./documentation/xpath%202.png)
 3. `div[1]` - gets the first child `div` of the element above.
-   ![](./documentation/3.%20div[1]%20of%20islrg.png)
+   ![](./documentation/xpath%203.png)
 4. `div[%s]` - gets the `'s'th` child `div` of the element above. The `%s` is supplied by the looping within `find_image_urls`. 
    * `imgurl = self.driver.find_element(By.XPATH, xpath_expression%(indx_1))`
-   * ![](./documentation/4.%20div[%s]%20of%20div[1].png) 
+   * ![](./documentation/xpath%204.png) 
+5. `a[1]` - gets the first child `a` element of the element above.
+   ![](documentation/xpath%205.png)
+6. `div[1]` - gets the first child `div` element of the element above
+   ![](documentation/xpath%206.png)
+7. `img` - gets an child image element of the element above
+   ![](documentation/xpath%207.png)
 
-5.  `a[1] - 
+*At this point, the image has been located in the document tree!*
+</details>
+
+Once the element has been found, the webdriver clicks the image, triggering a popup, which currently is injected under a div with the id `islsp`.
 
 
