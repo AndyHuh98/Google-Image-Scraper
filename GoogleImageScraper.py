@@ -183,6 +183,7 @@ class GoogleImageScraper():
 
         self.driver.quit()
         print("[INFO] Google search ended")
+        print("\n\n\n\n")
         return image_urls
 
     def save_images(self,image_urls, keep_filenames):
@@ -200,24 +201,24 @@ class GoogleImageScraper():
             try:
                 print("------------------------------------")
                 print("[INFO] Image url:%s"%(image_url))
-                search_string = self.search_key.replace(' ', '_')
+                filename_base = self.search_key.replace(' ', '_')
                 image = requests.get(image_url,timeout=5)
                 if image.status_code == 200:
-                    print("[INFO] Image retrieved for {}_{}".format(search_string, indx))
+                    print("[INFO] Image retrieved for {}_{}".format(self.search_key, indx))
                     try:
                         with Image.open(io.BytesIO(image.content)) as image_from_web:
                             try:
                                 print("[INFO] Generating local filename...")
                                 if (keep_filenames):
                                     #extact filename without extension from URL
-                                    o = urlparse(image_url)
-                                    image_url = o.scheme + "://" + o.netloc + o.path
+                                    parsed_url = urlparse(image_url)
+                                    image_url = parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path
                                     name = os.path.splitext(os.path.basename(image_url))[0]
                                     #join filename and extension
                                     filename = "%s.%s"%(name,image_from_web.format.lower())
                                 else:
                                     try:
-                                        filename = "%s_%s.%s"%(search_string,str(indx),image_from_web.format.lower())
+                                        filename = "%s_%s.%s"%(filename_base,str(indx),image_from_web.format.lower())
                                         print("[INFO] Generated filename as:", filename)
                                     except Exception as e:
                                         print("[ERROR] error generating local filename:", e)

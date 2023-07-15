@@ -5,13 +5,13 @@ A library created to scrape Google Images.<br>
 If you are looking for other image scrapers, JJLimmm has created image scrapers for Gettyimages, Shutterstock, and Bing. <br>
 Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
 
-## Setup and Execution
-### Pre-requisites:
+## **<u>Setup and Execution**</u>
+### **<u>Pre-requisites**</u>
 1. Google Chrome
 2. Python3 packages (Pillow, Selenium, Requests)
 3. Windows OS (Other OS is not tested)
 
-### Setup:
+### **<u>Setup**</u>
 1. Open command prompt
 2. Clone this repository (or [download](https://github.com/AndyHuh98/Google-Image-Scraper/archive/refs/heads/master.zip))
     ```
@@ -26,11 +26,11 @@ Visit their repo here: https://github.com/JJLimmm/Website-Image-Scraper
     python main.py
     ```
 
-### Usage:
+### **<u>Usage**</u>
 This project was created to bypass Google Chrome's new restrictions on web scraping from Google Images. 
 To use it, define your desired parameters in main.py and run through the command line:
 
-#### Running the script with default parameters:
+#### <u>**Running the script with default parameters:**</u>
 ```
 python main.py
 ```
@@ -46,7 +46,7 @@ numworkers=1
 keepfilename=False
 ````
 
-#### Running the script through CLI:
+#### <u>**Running the script through CLI:**</u>
 *replace these arguments with your own preferences*
 ```
 python3 main.py \
@@ -61,7 +61,7 @@ python3 main.py \
 * `--keepfilename` can be added to keep the original URL image filenames
 * `--headless` can be added to disable Chrome GUI
 
-#### Running in Colabs
+#### <u>**Running in Colabs**</u>
 Add the following cells:
 
 ````
@@ -85,18 +85,21 @@ Add the following cells:
 [![IMAGE ALT TEXT](https://github.com/ohyicong/Google-Image-Scraper/blob/master/youtube_thumbnail.PNG)](https://youtu.be/QZn_ZxpsIw4 "Google Image Scraper")
 
 
-### IMPORTANT:
+### **<u>IMPORTANT**</u>
 Although it says so in the video, this program will not run through VSCode. It must be run in the command line.
 
 This program will install an updated webdriver automatically. There is no need to install your own.
 
+
+---
+
 # How does it work?
 Somewhat sequential step by step of the key parts of the script execution. Note that some of these functions may change names, and documentation may go out of date - however, this is my best attempt to track what this script is doing (because the code is not clean whatsoever).
 
-## Initializing Colabs Webdriver
+## **<u>Initializing Colabs Webdriver**</u>
 The Python script first runs `initialize_colabs_webdriver` to get around Colabs Chromedriver errors. If not a Colabs environment, it downloads the latest Chromedriver later on.
 
-## Scraper execution
+## **<u>Scraper execution**</u>
 After attempting to initialize Colabs webdriver:
 * the script creates a `photos` folder within the package itself to hold the scraped images.
 * the script takes in the command line arguments parsed (or the default values for the arguments) to initialize the GoogleImageScraper
@@ -107,10 +110,10 @@ After attempting to initialize Colabs webdriver:
   * downloads the full list of image URLs using the GoogleImageScraper in the second step
 * releases resources at the end of execution
 
-## GoogleImageScraper internals
+## **<u>GoogleImageScraper internals**</u>
 If the environment isn't Colabs, during instantiation, the GoogleImageScraper class attempts to initialize the webdriver and download the latest version.
 
-### Instantiation
+### **<u>Instantiation**</u>
 Nothing out of the ordinary here, outside of one key part where it sets the base URL to execute the image scraping from. 
 
 ````
@@ -130,7 +133,7 @@ The current query parameters are as follows:
 
 </details>
 
-### `find_image_urls` method breakdown
+### **<u>Method breakdown: `find_image_urls`**</u>
 This method returns a list of image urls for a search query from Google.
 
 The basis of this method revolves around the following XPath expression: `xpath_expression = '//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'`. [XPath](https://en.wikipedia.org/wiki/XPath), at least to my understanding, can just be read somewhat like a regular path - each "selector" is separated by a `/` and represents a child node element of the previous element. 
@@ -156,6 +159,22 @@ The basis of this method revolves around the following XPath expression: `xpath_
 *At this point, the image has been located in the document tree!*
 </details>
 
-Once the element has been found, the webdriver clicks the image, triggering a popup, which currently is injected under a div with the id `islsp`.
+Once the element has been found, the webdriver clicks the image, triggering a popup. The script then attempts to find elements with one of the following classnames: 
+````
+["n3VNCb","iPVvYb","r48jcc","pT0Scc"]
+````
 
+These classes correspond with the main image element of the popup. I haven't been able to find `n3VNCb`, but the rest are visible as classes on the main image. 
 
+![](documentation/primary-popup.png)
+
+Then, we loop through the elements and grab the first image with a valid, non-encrypted source, adding it to the list of `image_urls` to save in the next step of the script. 
+
+Finally, if the number of image URLs currently retrieved is a factor of 15, we scroll to load the next batch of images.
+
+At the end of `find_image_urls`, we return the list of `image_urls` found during iteration.
+
+### **<u>`save_images` method breakdown**</u>
+This method takes in the image URLs retrieved in `find_image_urls` and uses the `requests` library to retrieve, and then save the images locally.
+
+This method first opens the image URL found as a file, and then generates image path to save the file locally. It then saves the image, and performs some cleanup.
