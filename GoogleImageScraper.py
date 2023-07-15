@@ -149,7 +149,7 @@ class GoogleImageScraper():
                 try:
                     print("[INFO] Attempting to select image from popup after clicking.")
                     #select image from the popup
-                    time.sleep(1)
+                    time.sleep(0.1)
                     class_names = ["iPVvYb","r48jcc","pT0Scc"]
                     images = []
                     for class_name in class_names:
@@ -173,7 +173,7 @@ class GoogleImageScraper():
                     if(len(image_urls)%15==0):
                         self.driver.execute_script("window.scrollTo(0, "+str(indx_1*60)+");")
                         print("[INFO] Loading next page")
-                        time.sleep(1)
+                        time.sleep(0.1)
                 except Exception as e:
                     print(f"[ERROR] Exception when scrolling: {e}")
                     time.sleep(0.1)
