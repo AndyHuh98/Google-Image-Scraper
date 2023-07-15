@@ -102,39 +102,18 @@ class GoogleImageScraper():
         while self.number_of_images > len(image_urls) and missed_count < self.max_missed:
             print("------------------------------------")
             element_found = False
-            if indx_2 > 0:
+            if indx_2 == 0:
                 try:
-                    print("[INFO] Attempting to find element using xpath_expression")
-                    img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1))
-                    img_element.click()
-                    indx_2 = indx_2 + 1
-                    missed_count = 0
-                    element_found = True
-                except Exception as e:
-                    print(f"[ERROR] Exception finding image element using xpath_expression: {e}")
-                    try:
-                        print("[INFO] Attempting to get the next image element in the results instead.")
-                        img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
-                        img_element.click()
-                        indx_2 = 1
-                        indx_1 = indx_1 + 1
-                        element_found = True
-                    except Exception as e:
-                        print(f"[ERROR] Failed to get the next image element as well. Skipping this iteration and adding to the miss count: {e}")
-                        indx_2 = indx_2 + 1
-                        missed_count = missed_count + 1
-            else:
-                try:
-                    print("[INFO] First iteration. Attempting to find element using xpath_expression.")
+                    print("[INFO] Attempting to find element using regular xpath_expression.")
                     img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1))
                     img_element.click()
                     missed_count = 0
                     indx_1 = indx_1 + 1    
                     element_found = True
                 except Exception as e:
-                    print(f"[ERROR] Exception finding image element using xpath_expression if indx_2 not > 0: {e}")
+                    print(f"[ERROR] Exception finding image element using xpath_expression, structure of page may have changed: {e}")
                     try:
-                        print("[INFO] Attempting to find image using the an extra nested div child. If successful, set xpath_expression to contain the extra nested child for future searches.")
+                        print("[INFO] Attempting to find image using an extra nested div child. If successful, set xpath_expression to contain the extra nested child for future searches.")
                         img_element = self.driver.find_element(By.XPATH, '//*[@id="islrg"]/div[1]/div[%s]/div[%s]/a[1]/div[1]/img'%(indx_1,indx_2+1))
                         img_element.click()
                         missed_count = 0
@@ -145,7 +124,27 @@ class GoogleImageScraper():
                         print(f"[ERROR] Exception finding image element using xpath_expression with an extra nested div child. Adding to miss count. {e}")
                         indx_1 = indx_1 + 1
                         missed_count = missed_count + 1
-
+            else:
+                try:
+                    print("[INFO] Attempting to find element using modified xpath_expression with an extra nested div child.")
+                    img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1, indx_2))
+                    img_element.click()
+                    indx_2 = indx_2 + 1
+                    missed_count = 0
+                    element_found = True
+                except Exception as e:
+                    print(f"[ERROR] Exception finding image element using modified xpath_expression: {e}")
+                    try:
+                        print("[INFO] Attempting to get the next image element in the results instead using modified xpath_expression.")
+                        img_element = self.driver.find_element(By.XPATH, xpath_expression%(indx_1+1, indx_2))
+                        img_element.click()
+                        indx_2 = 1
+                        indx_1 = indx_1 + 1
+                        element_found = True
+                    except Exception as e:
+                        print(f"[ERROR] Failed to get the next image element as well. Skipping this iteration and adding to the miss count: {e}")
+                        indx_2 = indx_2 + 1
+                        missed_count = missed_count + 1
             if element_found:
                 try:
                     print("[INFO] Attempting to select image from popup after clicking.")
@@ -167,7 +166,7 @@ class GoogleImageScraper():
                             print("[INFO] Image found.")
                             break
                 except Exception as e:
-                    print(f"[ERROR] Exception retrieving link: {e}")
+                    print(f"[ERROR] Exception getting link from image popup: {e}")
 
                 try:
                     #scroll page to load next image
